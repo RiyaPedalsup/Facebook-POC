@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+  <body>
+    <h2>Add Facebook Login to your webpage</h2>
+
+    <div id="fb-root"></div>
+    <script
+      async
+      defer
+      crossorigin="anonymous"
+      src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v20.0&appId=3631735337088308"
+      nonce="QWuUwShc"
+    ></script>
+
+    <p id="profile"></p>
+
+    <script>
+      // Add the Facebook SDK for Javascript
+      window.fbAsyncInit = function () {
+        // Initialize the SDK with your app and the Graph API version for your app
+        FB.init({
+          appId: "3617324628583177",
+          xfbml: true,
+          version: "v20.0",
+        });
+
+        // Check login status
+        FB.getLoginStatus(function (response) {
+          statusChangeCallback(response);
+        });
+      };
+
+      // Check status and handle the response
+      function statusChangeCallback(response) {
+        if (response.status === "connected") {
+          // Logged into your app and Facebook
+          fetchProfile();
+        } else {
+          // Not logged into your app or unable to tell
+          console.log("User not logged in");
+        }
+      }
+
+      // Fetch user profile
+      function fetchProfile() {
+        FB.api("/me", { fields: "name,email" }, function (response) {
+          document.getElementById("profile").innerHTML =
+            "Good to see you, " +
+            response.name +
+            ". I see your email address is " +
+            response.email;
+          // window.location.href =
+          //   "https://facebook-login-poc.onrender.com/auth/callback";
+        });
+      }
+
+      // Login button click handler
+      function fbLogin() {
+        FB.login(
+          function (response) {
+            if (response.authResponse) {
+              console.log("Welcome! Fetching your information.... ");
+              fetchProfile();
+            } else {
+              console.log("User cancelled login or did not fully authorize.");
+            }
+          },
+          { scope: "public_profile,email" }
+        );
+      }
+    </script>
+
+    <div
+      class="fb-login-button"
+      data-width=""
+      data-size="large"
+      data-button-type="continue_with"
+      data-layout="default"
+      data-auto-logout-link="false"
+      data-use-continue-as="true"
+      onlogin="fbLogin()"
+    ></div>
+  </body>
+</html>
